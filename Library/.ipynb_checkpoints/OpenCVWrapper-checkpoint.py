@@ -227,6 +227,9 @@ class Image():
         self.prod= cv2.warpPerspective(self.prod, M, self.prod.shape[1::-1])
         return self
     
+    def distanceTransform(self):
+        self.prod = cv2.distanceTransform(self.prod, cv2.DIST_L2, 5)
+        return self
     ###### Theresholding
     
     def threshBinary(self, ret=127, max=255, inv=False):
@@ -274,10 +277,48 @@ class Image():
         self.prod = cv2.GaussianBlur(self.prod, kernel_shape, *deviation)
         return self
     
+    ###### Morphological Transformations
+    
+    def erode(self, kernel_shape=(5,5), iter=1):
+        kernel = np.ones(kernel_shape, np.uint8)
+        self.prod = cv2.erode(self.prod, kernel, iterations=iter)
+        return self
+    
+    def dilate(self, kernel_shape=(5,5), iter=1):
+        kernel = np.ones(kernel_shape, np.uint8)
+        self.prod = cv2.dilate(self.prod, kernel, iterations=iter)
+        return self
+    
+    def opening(self, kernel_shape=(5,5), iter=1):
+        kernel = np.ones(kernel_shape, np.uint8)
+        self.prod = cv2.morphologyEx(self.prod, cv2.MORPH_OPEN, kernel, iterations=iter)
+        return self
+    
+    def closing(self, kernel_shape=(5,5), iter=1):
+        kernel = np.ones(kernel_shape, np.uint8)
+        self.prod = cv2.morphologyEx(self.prod, cv2.MORPH_CLOSE, kernel, iterations=iter)
+        return self
+    
+    def morphGrad(self, kernel_shape=(5,5)):
+        kernel = np.ones(kernel_shape, np.uint8)
+        self.prod = cv2.morphologyEx(self.prod, cv2.MORPH_GRADIENT, kernel)
+        return self
+    
+    def morphTopHat(self, kernel_shape=(5,5)):
+        kernel = np.ones(kernel_shape, np.uint8)
+        self.prod = cv2.morphologyEx(self.prod, cv2.MORPH_TOPHAT, kernel)
+        return self
+    
+    def morphBlackHat(self, kernel_shape=(5,5)):
+        kernel = np.ones(kernel_shape, np.uint8)
+        self.prod = cv2.morphologyEx(self.prod, cv2.MORPH_BLACKHAT, kernel)
+        return self
+    
     ###### Contours
     
     def findContours(self, flag=cv2.CHAIN_APPROX_SIMPLE):
-        self.contours, self.hierarchy = cv2.findContours(self.prod, cv2.RETR_TREE, flag)
+        # self.contours, self.hierarchy = cv2.findContours(self.prod, cv2.RETR_TREE, flag)
+        self.contours, self.hierarchy = cv2.findContours(self.prod, cv2.RETR_TREE,flag)
         return self
     
     def drawContours(self, contour=-1, color=(0,255,255)):
@@ -289,3 +330,8 @@ class Image():
             
         return self
     
+#     def watershed(self):
+#         self.
+#         .opening()\
+#         .
+        
